@@ -7,5 +7,58 @@ title: "Final Report"
 Quarto enables you to weave together content and executable code into a finished document. To learn more about Quarto see <https://quarto.org>.
 
 ```{r}
-1 + 1
+library(tidyverse)
+library(cowplot)
+library(leaps)
+```
+
+```{r}
+bodyfat = read_csv("bodyfat.csv")
+head(bodyfat)
+bodyfat = bodyfat |> select(-Density)
+```
+
+```{r}
+## Scatterplots of response variable and few chosen measurements
+
+bodyfat_age <- ggplot(bodyfat, aes(x = Age, y = BodyFat)) + 
+               geom_point() + 
+                xlab("Age (Years)") +
+                ylab("Body Fat Percentage") + 
+                theme(text = element_text(size = 15))
+
+
+
+bodyfat_weight <- ggplot(bodyfat, aes(x = Weight, y = BodyFat)) + 
+                 geom_point() + 
+                  xlab("Weight (lbs)") +
+                 ylab("Body Fat Percentage") + 
+                 theme(text = element_text(size = 15))
+
+
+bodyfat_height <- ggplot(bodyfat, aes(x = Height, y = BodyFat)) + 
+                 geom_point() + 
+                  xlab("Height (inches)") +
+                 ylab("Body Fat Percentage") + 
+                 theme(text = element_text(size = 15))
+
+
+bodyfat_abdom <- ggplot(bodyfat, aes(x = Abdomen, y = BodyFat)) + 
+                 geom_point() + 
+                  xlab("Abdomen Circumference (cm)") +
+                 ylab("Body Fat Percentage") + 
+                 theme(text = element_text(size = 15))
+
+
+plot_grid(bodyfat_age, bodyfat_weight, bodyfat_height, bodyfat_abdom, ncol=2, nrow= 2)
+```
+
+```{r}
+backward = regsubsets(BodyFat~., data=bodyfat, method="backward")
+bs = summary(backward)
+bs$which
+```
+
+```{r}
+
 ```
