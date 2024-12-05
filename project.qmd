@@ -1,64 +1,115 @@
 ---
 title: "Final Report"
+format: 
+  pdf: 
+    mainfont: "Times New Roman"
+execute:
+  echo: false
 ---
 
-## Quarto
-
-Quarto enables you to weave together content and executable code into a finished document. To learn more about Quarto see <https://quarto.org>.
+## Exploratory Data Analysis
 
 ```{r}
+#| output: false
 library(tidyverse)
 library(cowplot)
 library(leaps)
 ```
 
+Before using the dataset, we remove density as it was used to calculate body fat percentage and would thus have a direct correlation.
+
 ```{r}
-bodyfat = read_csv("bodyfat.csv")
+bodyfat = read_csv("bodyfat.csv", show_col_types = FALSE)
 head(bodyfat)
 bodyfat = bodyfat |> select(-Density)
 ```
+
+Next, we plot body fat percentage against different variables. We remove a data point with Height \< 30 from the visualization to better observe the overall trend.
 
 ```{r}
 ## Scatterplots of response variable and few chosen measurements
 
 bodyfat_age <- ggplot(bodyfat, aes(x = Age, y = BodyFat)) + 
-               geom_point() + 
-                xlab("Age (Years)") +
+               geom_point(size = 0.75) + 
+                xlab("Age (years)") +
                 ylab("Body Fat Percentage") + 
-                theme(text = element_text(size = 15))
+                theme(text = element_text(size = 10))
 
 
 
 bodyfat_weight <- ggplot(bodyfat, aes(x = Weight, y = BodyFat)) + 
-                 geom_point() + 
+                 geom_point(size = 0.75) + 
                   xlab("Weight (lbs)") +
                  ylab("Body Fat Percentage") + 
-                 theme(text = element_text(size = 15))
+                 theme(text = element_text(size = 10))
 
 
-bodyfat_height <- ggplot(bodyfat, aes(x = Height, y = BodyFat)) + 
-                 geom_point() + 
+bodyfat_height <- ggplot(subset(bodyfat, Height > 30), aes(x = Height, y = BodyFat))                  + geom_point(size = 0.75) + 
                   xlab("Height (inches)") +
                  ylab("Body Fat Percentage") + 
-                 theme(text = element_text(size = 15))
+                 theme(text = element_text(size = 10))
 
 
 bodyfat_abdom <- ggplot(bodyfat, aes(x = Abdomen, y = BodyFat)) + 
-                 geom_point() + 
+                 geom_point(size = 0.75) + 
                   xlab("Abdomen Circumference (cm)") +
                  ylab("Body Fat Percentage") + 
-                 theme(text = element_text(size = 15))
-
+                 theme(text = element_text(size = 10))
 
 plot_grid(bodyfat_age, bodyfat_weight, bodyfat_height, bodyfat_abdom, ncol=2, nrow= 2)
 ```
 
+We see that Weight and Abdomen Circumference have moderate to strong positive relationships with Body Fat Percentage, while Age may have a very weak but slightly positive relationship. Height does not seem to have a relationship with Body Fat Percentage.
+
+Next, we perform backwards selection to identify potential models.
+
 ```{r}
-backward = regsubsets(BodyFat~., data=bodyfat, method="backward")
+backward = regsubsets(BodyFat~., data=bodyfat, method="backward", nvmax = 8)
 bs = summary(backward)
 bs$which
 ```
 
-```{r}
+To further narrow down our options, we can compute Mallows' $C_p$ statistic for each model, treating the model with 8 covariates as our full model.
 
+```{r}
+reg1 = lm(BodyFat~Abdomen, data=bodyfat)
+reg2 = lm(BodyFat~Abdomen + Weight, data=bodyfat)
+reg3 = lm(BodyFat~Abdomen + Weight + Wrist, data=bodyfat)
+reg4 = lm(BodyFat~Abdomen + Weight + Wrist + Forearm, data=bodyfat)
+reg5 = lm(BodyFat~Abdomen + Weight + Wrist + Forearm + Age, data=bodyfat)
+reg6 = lm(BodyFat~Abdomen + Weight + Wrist + Forearm + Age + Thigh, data=bodyfat)
+reg7 = lm(BodyFat~Abdomen + Weight + Wrist + Forearm + Age + Thigh + Neck, data=bodyfat)
+reg8 = lm(BodyFat~Abdomen + Weight + Wrist + Forearm + Age + Thigh + Neck + Hip, data=bodyfat)
+
+models = list(reg1, reg2, reg3, reg4, reg5, reg6, reg7, reg8)
+
+fullms = summary(reg8)$sigma^2
+cp = c()
+p = seq(1:8)
+n = length(bodyfat$BodyFat)
+for(i in 1:8) {
+  rss = sum(residuals(models[[i]])^2)
+  cp = c(cp, rss/fullms - (n-2*(p[i] + 1)))
+}
+
+plot(x=p, y=cp, ylab= "Mallows' Cp")
+abline(a=1, b=1)
 ```
+
+From the above plot of $C_p$ vs $p$, we see that the only models with $C_p$ values close to the $p+1$ line are those with 7 and 8 covariates. Let us compare them below.
+
+```{r}
+summary(reg7)
+summary(reg8)
+```
+
+Since the Hip variable added in the model with 8 covariates is not statistically significant, we will choose the model with 7 covariates: Abdomen, Weight, Wrist, Forearm, Age, Thigh, Neck. We check residuals plots to ensure assumptions about our model have not been violated.
+
+```{r}
+reg = reg7
+plot(reg$residuals~reg$fitted.values, xlab = "Fitted values", ylab = "Residuals")
+qqnorm(reg$residuals)
+qqline(reg$residuals)
+```
+
+We see no obvious non-linear or fan-shaped pattern in the residuals vs. fitted values plot, indicating that linearity and homoscedasticity assumptions have not been violated. The QQ plot shows some signs of the errors being light-tailed, but the deviations should be small enough that our model is a good fit overall.
