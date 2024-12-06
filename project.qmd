@@ -1,11 +1,15 @@
 ---
-title: "Final Report"
 format: 
   pdf: 
     mainfont: "Times New Roman"
+    fontsize: 10pt
 execute:
   echo: false
 ---
+
+# Final Report
+
+## Introduction
 
 ## Exploratory Data Analysis
 
@@ -29,118 +33,127 @@ Next, we plot body fat percentage against different variables. We remove a data 
 ```{r}
 ## Scatterplots of response variable and few chosen measurements
 options(repr.plot.width = 50, repr.plot.height = 50)
-bodyfat_age <- ggplot(bodyfat, aes(x = Age, y = BodyFat)) + 
-               geom_point(size = 0.75) + 
-                xlab("Age (years)") +
-                ylab("Body Fat Percentage") + 
-                theme(text = element_text(size = 10))
+bodyfat_age <- ggplot(bodyfat, aes(x = Age, y = BodyFat)) +
+  geom_point(size = 0.75) +
+  xlab("Age (years)") +
+  ylab("Body Fat Percentage") +
+  theme(text = element_text(size = 10))
 
 
 
-bodyfat_weight <- ggplot(bodyfat, aes(x = Weight, y = BodyFat)) + 
-                 geom_point(size = 0.75) + 
-                  xlab("Weight (lbs)") +
-                 ylab("Body Fat Percentage") + 
-                 theme(text = element_text(size = 10))
+bodyfat_weight <- ggplot(bodyfat, aes(x = Weight, y = BodyFat)) +
+  geom_point(size = 0.75) +
+  xlab("Weight (lbs)") +
+  ylab("Body Fat Percentage") +
+  theme(text = element_text(size = 10))
 
 
-bodyfat_height <- ggplot(subset(bodyfat, Height > 30), aes(x = Height, y = BodyFat))                  + geom_point(size = 0.75) + 
-                  xlab("Height (inches)") +
-                 ylab("Body Fat Percentage") + 
-                 theme(text = element_text(size = 10))
+bodyfat_height <- ggplot(subset(bodyfat, Height > 30), aes(x = Height, y = BodyFat))                  + geom_point(size = 0.75) +
+  xlab("Height (inches)") +
+  ylab("Body Fat Percentage") +
+  theme(text = element_text(size = 10))
 
 
-bodyfat_abdom <- ggplot(bodyfat, aes(x = Abdomen, y = BodyFat)) + 
-                 geom_point(size = 0.75) + 
-                  xlab("Abdomen Circumference (cm)") +
-                 ylab("Body Fat Percentage") + 
-                 theme(text = element_text(size = 10))
+bodyfat_abdom <- ggplot(bodyfat, aes(x = Abdomen, y = BodyFat)) +
+  geom_point(size = 0.75) +
+  xlab("Abdomen Circumference (cm)") +
+  ylab("Body Fat Percentage") +
+  theme(text = element_text(size = 10))
 
-bodyfat_thigh<- ggplot(bodyfat, aes(x = Thigh, y = BodyFat)) + 
-                 geom_point(size = 0.75) + 
-                  xlab("Thigh Circumference (cm)") +
-                 ylab("Body Fat Percentage") + 
-                 theme(text = element_text(size = 10))
+bodyfat_thigh<- ggplot(bodyfat, aes(x = Thigh, y = BodyFat)) +
+  geom_point(size = 0.75) +
+  xlab("Thigh Circumference (cm)") +
+  ylab("Body Fat Percentage") +
+  theme(text = element_text(size = 10))
 
-bodyfat_hip<- ggplot(bodyfat, aes(x = Hip, y = BodyFat)) + 
-                 geom_point(size = 0.75) + 
-                 xlab("Hip Circumference (cm)") +
-                 ylab("Body Fat Percentage") + 
-                 theme(text = element_text(size = 10))
+bodyfat_hip<- ggplot(bodyfat, aes(x = Hip, y = BodyFat)) +
+  geom_point(size = 0.75) +
+  xlab("Hip Circumference (cm)") +
+  ylab("Body Fat Percentage") +
+  
+  theme(text = element_text(size = 10))
 
-bodyfat_knee<- ggplot(bodyfat, aes(x = Knee, y = BodyFat)) + 
-                 geom_point(size = 0.75) + 
-                 xlab("Knee Circumference (cm)") +
-                 ylab("Body Fat Percentage") + 
-                 theme(text = element_text(size = 10))
+bodyfat_knee<- ggplot(bodyfat, aes(x = Knee, y = BodyFat)) +
+  geom_point(size = 0.75) +
+  xlab("Knee Circumference (cm)") +
+  ylab("Body Fat Percentage") +
+  theme(text = element_text(size = 10))
 
-bodyfat_ankle<- ggplot(bodyfat, aes(x = Ankle, y = BodyFat)) + 
-                 geom_point(size = 0.75) + 
-                 xlab("Ankle Circumference (cm)") +
-                 ylab("Body Fat Percentage") + 
-                 theme(text = element_text(size = 10))
+bodyfat_ankle<- ggplot(bodyfat, aes(x = Ankle, y = BodyFat)) +
+  geom_point(size = 0.75) +
+  xlab("Ankle Circumference (cm)") +
+  ylab("Body Fat Percentage") +
+  theme(text = element_text(size = 10))
 
-bodyfat_wrist<- ggplot(bodyfat, aes(x = Wrist, y = BodyFat)) + 
-                 geom_point(size = 0.75) + 
-                 xlab("Wrist Circumference (cm)") +
-                 ylab("Body Fat Percentage") + 
-                 theme(text = element_text(size = 10))
+bodyfat_wrist<- ggplot(bodyfat, aes(x = Wrist, y = BodyFat)) +
+  geom_point(size = 0.75) +
+  xlab("Wrist Circumference (cm)") +
+  ylab("Body Fat Percentage") +
+  theme(text = element_text(size = 10))
 
-bodyfat_biceps<- ggplot(bodyfat, aes(x = Biceps, y = BodyFat)) + 
-                 geom_point(size = 0.75) + 
-                 xlab("Biceps Circumference (cm)") +
-                 ylab("Body Fat Percentage") + 
-                 theme(text = element_text(size = 10))
-
-
-bodyfat_chest<- ggplot(bodyfat, aes(x = Chest, y = BodyFat)) + 
-                 geom_point(size = 0.75) + 
-                 xlab("Chest Circumference (cm)") +
-                 ylab("Body Fat Percentage") + 
-                 theme(text = element_text(size = 10))
-
-bodyfat_forearam<- ggplot(bodyfat, aes(x = Forearm, y = BodyFat)) + 
-                 geom_point(size = 0.75) + 
-                 xlab("Forearm Circumference (cm)") +
-                 ylab("Body Fat Percentage") + 
-                 theme(text = element_text(size = 10))
+bodyfat_biceps<- ggplot(bodyfat, aes(x = Biceps, y = BodyFat)) +
+  geom_point(size = 0.75) +
+  xlab("Biceps Circumference (cm)") +
+  ylab("Body Fat Percentage") +
+  theme(text = element_text(size = 10))
 
 
-bodyfat_neck<- ggplot(bodyfat, aes(x = Neck, y = BodyFat)) + 
-                 geom_point(size = 0.75) + 
-                 xlab("Neck Circumference (cm)") +
-                 ylab("Body Fat Percentage") + 
-                 theme(text = element_text(size = 10))
+bodyfat_chest<- ggplot(bodyfat, aes(x = Chest, y = BodyFat)) +
+  geom_point(size = 0.75) +
+  xlab("Chest Circumference (cm)") +
+  ylab("Body Fat Percentage") +
+  theme(text = element_text(size = 10))
 
-plot_grid(bodyfat_age, bodyfat_weight, bodyfat_height, bodyfat_abdom,bodyfat_thigh,bodyfat_hip,bodyfat_knee, ncol=3, nrow= 2, scale = 1)
-plot_grid(bodyfat_biceps, bodyfat_wrist, bodyfat_ankle,bodyfat_chest,bodyfat_forearam, bodyfat_neck,  ncol=3, nrow= 2, scale = 1)
+bodyfat_forearam<- ggplot(bodyfat, aes(x = Forearm, y = BodyFat)) +
+  geom_point(size = 0.75) +
+  xlab("Forearm Circumference (cm)") +
+  ylab("Body Fat Percentage") +
+  theme(text = element_text(size = 10))
+
+
+bodyfat_neck<- ggplot(bodyfat, aes(x = Neck, y = BodyFat)) +
+  geom_point(size = 0.75) +
+  xlab("Neck Circumference (cm)") +
+  ylab("Body Fat Percentage") +
+  theme(text = element_text(size = 10))
+
+plot_grid(bodyfat_age, bodyfat_weight, bodyfat_height, bodyfat_abdom, bodyfat_thigh,bodyfat_hip, ncol=3, nrow=2, scale = 1)
+plot_grid(bodyfat_biceps, bodyfat_wrist, bodyfat_ankle,bodyfat_chest,bodyfat_forearam, bodyfat_neck,   ncol=3, nrow=2, scale = 1)
+plot_grid(bodyfat_knee, ncol=3, nrow=2, scale=1)
 ```
 
 We see that Weight, Abdomen, Thigh, Hip, Biceps, Neck, Ankle, Chest, have moderate to strong positive relationships with Body Fat Percentage. Age, Forearm Circumference and Wrist Circumference may have a very weak but slightly positive relationship. Height does not seem to have a relationship with Body Fat Percentage.
 
 It does not seem that our variance in bodyfat changes with our covariates, so we don't think a transformation would be needed at this stage of our analysis.
 
-We will also calculate some summary statistics to get an idea of the variables in ourdataset.
+We will also calculate some summary statistics to get an idea of the variables in our dataset.
 
 ```{r}
+print("Means")
 summaries <- bodyfat |>
              summarise(across(BodyFat:Wrist, mean))
+summaries
+```
+
+```{r}
+print("Standard deviations")
 summaries2 <- bodyfat |>
              summarise(across(BodyFat:Wrist, sd))
-summaries
 summaries2
+```
 
-num_nas = data.frame(colSums(is.na(bodyfat)))
+```{r}
+num_nas = tibble(NA_values = sum(is.na(bodyfat)))
 num_nas
 ```
 
 There are no NA values in our dataset, which is good for our modelling.
 
-# Analysis
+## Analysis
 
-Our exploratory data analsysis suggested that a linear model may be approrpriate to explain the relationship between body fat percentage and various physical measurmenets. To address our research question, we would attempt to fit a linear regression model, with body fat percentage as our response and a suitable combination of other variables. We would perform backward selection to determine which variables contain the most useful information to explain the variation in body fat percentage.
+Our exploratory data analysis suggested that a linear model may be appropriate to explain the relationship between body fat percentage and various physical measurements. To address our research question, we would attempt to fit a linear regression model, with body fat percentage as our response and a suitable combination of other variables. We would perform backward selection to determine which variables contain the most useful information to explain the variation in body fat percentage.
 
-To perform linear regression we need to keep in mind the following assumptions
+To perform linear regression we need to keep in mind the following assumptions:
 
 1.  Linear Relationship between the response and covariates.
 2.  Independence of error terms
@@ -152,12 +165,12 @@ From the exploratory analysis, the linear relationship assumption seems appropri
 So now, we perform backwards selection to identify potential models.
 
 ```{r}
-backward = regsubsets(BodyFat~., data=bodyfat, method="backward", nvmax = 8)
+backward = regsubsets(BodyFat~., data=bodyfat, method="backward", nvmax = 13)
 bs = summary(backward)
 bs$which
 ```
 
-To further narrow down our options, we can compute Mallows' $C_p$ statistic for each model, treating the model with 8 covariates as our full model. We also tabulate the values for $$R^2$$and Adjusted $$R^2$$.
+To further narrow down our options, we can compute Mallows' $C_p$ statistic for each model, treating the model with all 13 covariates as our full model. We also tabulate the values for $R^2$ and Adjusted $R^2$.
 
 ```{r}
 reg1 = lm(BodyFat~Abdomen, data=bodyfat)
@@ -168,14 +181,19 @@ reg5 = lm(BodyFat~Abdomen + Weight + Wrist + Forearm + Age, data=bodyfat)
 reg6 = lm(BodyFat~Abdomen + Weight + Wrist + Forearm + Age + Thigh, data=bodyfat)
 reg7 = lm(BodyFat~Abdomen + Weight + Wrist + Forearm + Age + Thigh + Neck, data=bodyfat)
 reg8 = lm(BodyFat~Abdomen + Weight + Wrist + Forearm + Age + Thigh + Neck + Hip, data=bodyfat)
+reg9 = lm(BodyFat~Abdomen + Weight + Wrist + Forearm + Age + Thigh + Neck + Hip + Biceps, data=bodyfat)
+reg10 = lm(BodyFat~Abdomen + Weight + Wrist + Forearm + Age + Thigh + Neck + Hip + Biceps + Ankle, data=bodyfat)
+reg11 = lm(BodyFat~Abdomen + Weight + Wrist + Forearm + Age + Thigh + Neck + Hip + Biceps + Ankle + Height, data=bodyfat)
+reg12 = lm(BodyFat~Abdomen + Weight + Wrist + Forearm + Age + Thigh + Neck + Hip + Biceps + Ankle + Height + Chest, data=bodyfat)
+reg13 = lm(BodyFat~Abdomen + Weight + Wrist + Forearm + Age + Thigh + Neck + Hip + Biceps + Ankle + Height + Chest + Knee, data=bodyfat)
 
-models = list(reg1, reg2, reg3, reg4, reg5, reg6, reg7, reg8)
+models = list(reg1, reg2, reg3, reg4, reg5, reg6, reg7, reg8, reg9, reg10, reg11, reg12, reg13)
 
-fullms = summary(reg8)$sigma^2
+fullms = summary(reg13)$sigma^2
 cp = c()
-p = seq(1:8)
+p = seq(1:13)
 n = length(bodyfat$BodyFat)
-for(i in 1:8) {
+for(i in 1:13) {
   rss = sum(residuals(models[[i]])^2)
   cp = c(cp, rss/fullms - (n-2*(p[i] + 1)))
 }
@@ -184,27 +202,30 @@ plot(x=p, y=cp, ylab= "Mallows' Cp")
 abline(a=1, b=1)
 
 fat_bw_summary <- tibble(
-   n_input_variables = 1:8,
-   R2 = bs$rsq,
-   AdjR2 = bs$adjr2,
-)
+   p = 1:13
+) |> mutate(Cp = cp) |> mutate(R2 = bs$rsq) |> mutate(AdjR2 = bs$adjr2)
 fat_bw_summary
 ```
 
-From the above plot of $C_p$ vs $p$, we see that the only models with $C_p$ values close to the $p+1$ line are those with 7 and 8 covariates. Let us compare them below.
+From the above plot of $C_p$ vs $p$, we see that the only models with $C_p$ values close to the $p+1$ line are those with 6, 7, 11, 12, and 13 covariates. To decide between these models, we can look at the $R^2$ and adjusted $R^2$ values, and we see their rate of increase decreases after $p=6$, indicating that the benefit of adding additional covariates is smaller. Therefore, we choose the model with 6 covariates: Abdomen, Weight, Wrist, Forearm, Age, and Thigh.
 
 ```{r}
-summary(reg7)
-summary(reg8)
+summary(reg6)
 ```
 
-Since the Hip variable added in the model with 8 covariates is not statistically significant, we will choose the model with 7 covariates: Abdomen, Weight, Wrist, Forearm, Age, Thigh, Neck. We check residuals plots to ensure assumptions about our model have not been violated.
+We check residuals plots to ensure assumptions about our model have not been violated:
 
 ```{r}
-reg = reg7
-plot(reg$residuals~reg$fitted.values, xlab = "Fitted values", ylab = "Residuals")
+reg = reg6
+summary(reg)
+plot(reg$residuals~reg$fitted.values, xlab = "Fitted values", ylab = "Residuals", pch=20)
+```
+
+```{r}
 qqnorm(reg$residuals)
 qqline(reg$residuals)
 ```
 
-We see no obvious non-linear or fan-shaped pattern in the residuals vs. fitted values plot, indicating that linearity and homoscedasticity assumptions have not been violated. The QQ plot shows some signs of the errors being light-tailed, but the deviations should be small enough that our model is a good fit overall.
+We see no obvious non-linear or fan-shaped pattern in the residuals vs. fitted values plot, indicating that linearity and homoscedasticity assumptions have not been violated. The QQ plot shows some signs of the errors being light-tailed, but the deviations should be slight enough that our model is a good fit overall.
+
+## Conclusion
