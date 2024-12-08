@@ -270,7 +270,7 @@ VIF_bodyfat
 
 ## Conclusion
 
-From the analysis, we identified that several physical measurements are significantly related to body fat percentage. After conducting exploratory data analysis and using backward selection, the optimal linear regression model included six covariates: Abdomen, Weight, Wrist, Forearm, Age, and Thigh. This model was chosen based on its adherence to the assumptions of linear regression, minimal multicollinearity among variables, and strong statistical metrics, including Mallows' Cp, R\^2 and
+From the analysis, we identified that several physical measurements are significantly related to body fat percentage. After conducting exploratory data analysis and using backward selection, the optimal linear regression model included six covariates: Abdomen, Weight, Wrist, Forearm, Age, and Thigh. This model was chosen based on its adherence to the assumptions of linear regression, minimal multicollinearity among variables, and strong statistical metrics, including Mallows' Cp, R^2^ and adjusted R^2^.
 
 The selected model performed well under diagnostic checks, with residual plots indicating no major violations of linearity, independence, or constant variance assumptions. While the QQ plot showed slight deviations, these were minor and did not significantly undermine the fit of the model.
 
@@ -278,7 +278,7 @@ The selected model performed well under diagnostic checks, with residual plots i
 
 -   **Abdomen circumference** is the strongest predictor of body fat, as seen by its high coefficient and significance.
 
--   Other variables like **Weight, Wrist, Forearm, and Age** also contribute meaningfully.
+-   Other variables like **Weight, Wrist, Forearm, Thigh, Age** also contribute meaningfully.
 
 -   The model fits the data well but has some residual error (4.311), likely from unmeasured factors or noise.
 
