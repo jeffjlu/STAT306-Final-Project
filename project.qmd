@@ -269,3 +269,23 @@ VIF_bodyfat
 ```
 
 ## Conclusion
+
+From the analysis, we identified that several physical measurements are significantly related to body fat percentage. After conducting exploratory data analysis and using backward selection, the optimal linear regression model included six covariates: Abdomen, Weight, Wrist, Forearm, Age, and Thigh. This model was chosen based on its adherence to the assumptions of linear regression, minimal multicollinearity among variables, and strong statistical metrics, including Mallows' Cp, R\^2 and
+
+The selected model performed well under diagnostic checks, with residual plots indicating no major violations of linearity, independence, or constant variance assumptions. While the QQ plot showed slight deviations, these were minor and did not significantly undermine the fit of the model.
+
+#### Key findings
+
+-   **Abdomen circumference** is the strongest predictor of body fat, as seen by its high coefficient and significance.
+
+-   Other variables like **Weight, Wrist, Forearm, and Age** also contribute meaningfully.
+
+-   The model fits the data well but has some residual error (4.311), likely from unmeasured factors or noise.
+
+#### Implications
+
+The findings suggest that these easily measurable physical attributes can effectively estimate body fat percentage. Abdomen circumference, in particular, stands out as a critical predictor, which could be useful for health and fitness evaluations without requiring sophisticated equipment.
+
+#### Future Directions
+
+While the current model provides meaningful insights, its applicability is limited to the specific population (252 males) studied. Future research should aim to validate these findings across diverse groups, including females and individuals from various ethnic backgrounds and age ranges. Additionally, incorporating factors like diet, activity level, and genetic predisposition could further refine predictions and broaden the scope of applicability.
