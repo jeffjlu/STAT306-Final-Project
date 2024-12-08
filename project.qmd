@@ -10,6 +10,16 @@ execute:
 # Final Report
 
 ## Introduction
+The dataset we are using was provided by Dr. A. Garth Fisher (personal communication, October 5, 1994), and contains age, weight, height, and body circumference measurements for 252 men. The data was originally collected in 1985 (Penrose et al., 1985) and can be found at Body Fat Prediction Dataset. Instead of using expensive medical imaging methods, these measures were taken in order to create a predictive equation for body fat percentage using simple indicators.
+The response variable is Body Fat Percentage,  estimated by underwater weighing, which is an accurate technique that derives body density and subsequently estimates body fat percentage using predictive equations like Siri’s and Brozek's equations. The explanatory variables in the dataset include: 
+Age: Recorded in years.
+Weight: Recorded in pounds. It includes both weight in air (used in standard conditions) and in water (for density calculation purposes).
+Height: Measured in inches, included in the dataset as a crucial factor for calculating indices like Body Mass Index (BMI).
+Density: Calculated in g/cm3.
+Body Circumference Measurements: Ten different variables representing various circumferences of Neck, Chest, Abdomen (measured at the umbilicus level with the iliac crest), Hip, Thigh, Knee, Ankle, Biceps (extended), Forearm, Wrist (measured distal to the styloid processes). All measurements are in centimetres (cm) using a measuring tape. 
+BMI (weight divided by height squared) is widely used as a standard measure of obesity. However, according to Adab et al. (2018), it has limitations. Studies had shown that BMI is not an accurate predictor of obesity, especially in people who are athletic, short or older. Instead, directly measuring body fat distribution appears to be a better indicator of obesity. While technologies like dual-energy X-ray absorptiometry (DEXA), computed tomography (CT), and magnetic resonance imaging (MRI) provide accurate imaging of body fat, they are also expensive and not suitable for repeated use (Denton & Karpe, 2016). This study aimed to evaluate whether simple and cost-effective measurements of body circumference could be a reliable predictor of body fat percentage. 
+Our research question is which physical measurements of a person, out of the ones we have access to, are related to total body fat percentage? The response variable in our investigation will be body fat percentage (from Siri's (1956) equation) and the covariates will be Age, Weight, Height, Neck, Chest, Abdomen, Hip, Thigh, Knee, Ankle, Biceps, Forearm, Wrist. We will omit density as a covariate as it was directly used to calculate body fat percentage using equations and would thus have a direct correlation.
+
 
 ## Exploratory Data Analysis
 
