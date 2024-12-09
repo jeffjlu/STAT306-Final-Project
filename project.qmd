@@ -385,3 +385,11 @@ Additionally, we utilised backward selection to pick an optimal model of 6 covar
 #### Future Directions
 
 While the current model provides meaningful insights, its applicability is limited to the specific population (252 males) studied. Future research should aim to validate these findings across diverse groups, including females and individuals from various ethnic backgrounds and age ranges. Additionally, incorporating factors like diet, activity level, and genetic predisposition could further refine predictions and broaden the scope of applicability.
+
+## References
+
+Adab, P., Pallan, M., & Whincup, P. H. (2018). Is BMI the best measure of obesity? BMJ: British Medical Journal, 360. <https://doi.org/10.1136/bmj.k1274> 
+
+Denton, N. and Karpe, F. (2016), Measuring body composition and regional fat mass accurately. Pract Diab, 33: 224-226. <https://doi.org/10.1002/pdi.2043> 
+
+Penrose, K., Nelson, A., and Fisher, A. (1985), Generalized Body Composition Prediction Equation for Men Using Simple Measurement Techniques (abstract), Medicine and Science in Sports and Exercise, 17(2), 189.
