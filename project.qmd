@@ -3,6 +3,10 @@ format:
   pdf: 
     mainfont: "Times New Roman"
     fontsize: 10pt
+    margin-top: 1in
+    margin-bottom: 1in
+    margin-left: 0.8in
+    margin-right: 0.8in
 execute:
   echo: false
 ---
@@ -11,18 +15,19 @@ execute:
 
 ## Introduction
 
-The dataset we are using was provided by Dr. A. Garth Fisher (personal communication, October 5, 1994), and contains age, weight, height, and body circumference measurements for 252 men. The data was originally collected in 1985 (Penrose et al., 1985) and can be found at [Body Fat Prediction Dataset. ](https://www.kaggle.com/datasets/fedesoriano/body-fat-prediction-dataset)Instead of using expensive medical imaging methods, these measures were taken in order to create a predictive equation for body fat percentage using simple indicators. The response variable is Body Fat Percentage, estimated by underwater weighing, which is an accurate technique that derives body density and subsequently estimates body fat percentage using predictive equations like Siri’s and Brozek's equations. The dataset contains the following variables
+The dataset we are using was provided by Dr. A. Garth Fisher (personal communication, October 5, 1994), and contains age, weight, height, and body circumference measurements for 252 men. The data was originally collected in 1985 (Penrose et al., 1985) and can be found at [Body Fat Prediction Dataset.](https://www.kaggle.com/datasets/fedesoriano/body-fat-prediction-dataset) Instead of using expensive medical imaging methods, these measures were taken in order to create a predictive equation for body fat percentage using simple indicators. The response variable is Body Fat Percentage, estimated by underwater weighing, which is an accurate technique that derives body density and subsequently estimates body fat percentage using predictive equations like Siri’s and Brozek's equations. The dataset contains the following variables:
 
 -   Bodyfat: Estimated using Siri’s and Brozek's equations
 
-```{=html}
 <!-- -->
-```
+
 -   Age: Recorded in years.
 
 -   Weight: Recorded in pounds. It includes both weight in air (used in standard conditions) and in water (for density calculation purposes).
 
--   Height: Measured in inches, included in the dataset as a crucial factor for calculating indices like Body Mass Index (BMI). Density: Calculated in $$g/cm^3.$$
+-   Height: Measured in inches, included in the dataset as a crucial factor for calculating indices like Body Mass Index (BMI).
+
+-   Density: Calculated in $g/cm^3$.
 
 -   Body Circumference Measurements: Ten different variables representing various circumferences of Neck, Chest, Abdomen (measured at the umbilicus level with the iliac crest), Hip, Thigh, Knee, Ankle, Biceps (extended), Forearm, Wrist (measured distal to the styloid processes). All measurements are in centimetres (cm) using a measuring tape.
 
@@ -36,10 +41,9 @@ Our research question is **"Which physical measurements of a person, out of the 
 
 ## Exploratory Data Analysis
 
-We start by loading the relevant libaries
-
 ```{r}
 #| output: false
+# Loading libraries
 library(tidyverse)
 library(cowplot)
 library(leaps)
@@ -47,7 +51,7 @@ library(car)
 library(GGally)
 ```
 
-Before using the dataset, we remove density as it was used to calculate body fat percentage and would thus have a direct correlation.
+To get an idea of our dataset:
 
 ```{r}
 bodyfat = read_csv("bodyfat.csv", show_col_types = FALSE)
@@ -195,6 +199,7 @@ From the exploratory analysis, the linear relationship assumption seems appropri
 So now, we perform backwards selection to identify potential models.
 
 ```{r}
+#| output: false
 backward = regsubsets(BodyFat~., data=bodyfat, method="backward", nvmax = 13)
 bs = summary(backward)
 bs$which
@@ -217,6 +222,7 @@ reg11 = lm(BodyFat~Abdomen + Weight + Wrist + Forearm + Age + Thigh + Neck + Hip
 reg12 = lm(BodyFat~Abdomen + Weight + Wrist + Forearm + Age + Thigh + Neck + Hip + Biceps + Ankle + Height + Chest, data=bodyfat)
 reg13 = lm(BodyFat~Abdomen + Weight + Wrist + Forearm + Age + Thigh + Neck + Hip + Biceps + Ankle + Height + Chest + Knee, data=bodyfat)
 
+# Calculating Cp's
 models = list(reg1, reg2, reg3, reg4, reg5, reg6, reg7, reg8, reg9, reg10, reg11, reg12, reg13)
 fullms = summary(reg13)$sigma^2
 cp = c()
@@ -242,7 +248,7 @@ From the above plot of $C_p$ vs $p$, we see that the only models with $C_p$ valu
 summary(reg6)
 ```
 
-We see that all of our variables except Thigh are significant at the 5 % level. The p-value for thigh is very close to statistical significance. As expected, most variables have a positive coefficient, suggesting that the response (bodyfat percentage) increases with an increase in the covariates.
+We see that all of our variables except Thigh are significant at the 5% level. The p-value for thigh is very close to statistical significance. As expected, most variables have a positive coefficient, suggesting that the response (bodyfat percentage) increases with an increase in the covariates.
 
 On initial thought, it is slightly surprising that weight and wrist have a negative coefficient because the exploratory data analysis demonstrated that these variables have a positive relationship with bodyfat percentage.
 
@@ -251,39 +257,39 @@ We can examine this further using partial correlations. We calculate partial cor
 ```{r}
 reg_bodyfat = lm(BodyFat ~ Abdomen + Wrist + Forearm + Age + Thigh, data=bodyfat)
 reg_wrist =   lm(Weight  ~ Abdomen + Wrist + Forearm + Age + Thigh, data=bodyfat)
-paste("Partial correlation between Weight and Bodyfat, adjusting for Abdomen, Wrist, Forearm,Age, Thigh", cor(reg_bodyfat$residuals, reg_wrist$residuals))
+cat("Partial correlation between Weight and Bodyfat, adjusting for Abdomen, Wrist, \nForearm, Age, Thigh:", round(cor(reg_bodyfat$residuals, reg_wrist$residuals), 3), "\n")
 
 reg_bodyfat = lm(BodyFat ~ Abdomen, data=bodyfat)
 reg_wrist =   lm(Weight ~  Abdomen, data=bodyfat)
-paste("Partial correlation between Weight and bodyfat, adjusting for Abdomen",cor(reg_bodyfat$residuals, reg_wrist$residuals))
+cat("Partial correlation between Weight and bodyfat, adjusting for Abdomen:", round(cor(reg_bodyfat$residuals, reg_wrist$residuals), 3), "\n")
 
 reg_bodyfat = lm(BodyFat ~  Wrist + Forearm + Age + Thigh, data=bodyfat)
 reg_wrist =   lm(Weight  ~  Wrist + Forearm + Age + Thigh, data=bodyfat)
-paste("Partial correlation between Weight and bodyfat, adjusting for Wrist,Forearm + Age,Thigh",cor(reg_bodyfat$residuals, reg_wrist$residuals))
+cat("Partial correlation between Weight and bodyfat, adjusting for Wrist, Forearm, \nAge, Thigh:", round(cor(reg_bodyfat$residuals, reg_wrist$residuals), 3), "\n")
 
 
 reg_bodyfat = lm(BodyFat ~ Forearm + Age + Thigh, data=bodyfat)
 reg_wrist =   lm(Weight ~  Forearm + Age + Thigh, data=bodyfat)
-paste("Partial correlation between Weight and bodyfat, adjusting for Forearm, Age, Thigh",cor(reg_bodyfat$residuals, reg_wrist$residuals))
+cat("Partial correlation between Weight and bodyfat, adjusting for Forearm, Age, \nThigh:", round(cor(reg_bodyfat$residuals, reg_wrist$residuals), 3), "\n")
 ```
 
 From the partial correlations, it seems like once we have adjusted for abdomen circumference, a one unit increase in weight is related to a decrease in body fat percentage. This could be because keeping abdomen circumference constant, an increase in weight may be related to muscle gain or increase in bone density. If we did not adjust for abdomen, we see that an increase is weight is associated with increases in body fat, which suggests that body fat in men is possibly stored in abdomen.
 
-Lets do the same for wrist
+Let's do the same for wrist:
 
 ```{r}
 
 reg_bodyfat = lm(BodyFat ~ Abdomen + Weight + Forearm + Age + Thigh, data=bodyfat)
 reg_wrist =   lm(Wrist   ~ Abdomen + Weight + Forearm + Age + Thigh, data=bodyfat)
-paste("Partial correlation between wrist and bodyfat, adjusting for Abdomen + Weight + Forearm + Age + Thigh", cor(reg_bodyfat$residuals, reg_wrist$residuals))
+cat("Partial correlation between wrist and bodyfat, adjusting for Abdomen, Weight, \nForearm, Age, Thigh:", round(cor(reg_bodyfat$residuals, reg_wrist$residuals), 3), "\n")
 
 reg_bodyfat = lm(BodyFat ~ Weight + Forearm + Age + Thigh, data=bodyfat)
 reg_wrist =   lm(Wrist   ~ Weight + Forearm + Age + Thigh, data=bodyfat)
-paste("Partial correlation between wrist and bodyfat, adjusting for Weight + Forearm + Age + Thigh",cor(reg_bodyfat$residuals, reg_wrist$residuals))
+cat("Partial correlation between wrist and bodyfat, adjusting for Weight, Forearm, Age, \nThigh:", round(cor(reg_bodyfat$residuals, reg_wrist$residuals), 3), "\n")
 
 reg_bodyfat = lm(BodyFat ~ Forearm + Age + Thigh, data=bodyfat)
 reg_wrist =   lm(Wrist   ~ Forearm + Age + Thigh, data=bodyfat)
-paste("Partial correlation between wrist and bodyfat, adjusting for Forearm + Age + Thigh",cor(reg_bodyfat$residuals, reg_wrist$residuals))
+cat("Partial correlation between wrist and bodyfat, adjusting for Forearm + Age + \nThigh:", round(cor(reg_bodyfat$residuals, reg_wrist$residuals), 3), "\n")
 
 ```
 
@@ -296,12 +302,13 @@ Both these findings suggest that solely wrist and weight may not be good indicat
 We check residuals plots to ensure assumptions about our model have not been violated:
 
 ```{r}
+options(repr.plot.height = 8, repr.plot.width = 12)
 reg = reg6
-summary(reg)
 plot(reg$residuals~reg$fitted.values, xlab = "Fitted values", ylab = "Residuals", pch=20)
 ```
 
 ```{r}
+options(repr.plot.height = 8, repr.plot.width = 12)
 qqnorm(reg$residuals)
 qqline(reg$residuals)
 ```
@@ -334,7 +341,7 @@ plot_cor_matrix <- cor_matrix %>%
         axis.text.y = element_text(vjust = 1, size = 14, hjust = 1),
         legend.title = element_text(size = 12),
         legend.text = element_text(size = 12),
-        legend.key.size = unit(1.5, "cm")
+        legend.key.size = unit(1, "cm")
     ) +
     coord_fixed() +
     geom_text(aes(var1, var2, label = round(corr, 2)), color = "black", size = 2)
@@ -353,7 +360,7 @@ VIF_bodyfat
 
 From the analysis, we identified that several physical measurements are significantly related to body fat percentage. After conducting exploratory data analysis and using backward selection, the optimal linear regression model included six covariates: Abdomen, Weight, Wrist, Forearm, Age, and Thigh.
 
-This model was chosen based on its adherence to the assumptions of linear regression, minimal multicollinearity among variables, and strong statistical metrics, including Mallows' Cp, R^2^ and adjusted R^2^. These 6 covariates seem to be good explanatory variables for bodyfat percentage and while including other variables improves our model, the additional improvement is quite small.
+This model was chosen based on its adherence to the assumptions of linear regression, minimal multicollinearity among variables, and strong statistical metrics, including Mallows' $Cp$, $R^2$ and adjusted $R^2$. These 6 covariates seem to be good explanatory variables for bodyfat percentage and while including other variables improves our model, the additional improvement is quite small.
 
 The selected model performed well under diagnostic checks, with residual plots indicating no major violations of linearity, independence, or constant variance assumptions. While the QQ plot showed slight deviations, these were minor and did not significantly undermine the fit of the model. There was some evidence of multicollinearity, which suggests that a smaller subset of our variables could also create a good model, but for the purposes of our analysis, we decided to include some additional variables since they improved adjusted $R^2$ and did not have high standard errors.
 
