@@ -30,6 +30,7 @@ library(tidyverse)
 library(cowplot)
 library(leaps)
 library(car)
+library(GGally)
 ```
 
 Before using the dataset, we remove density as it was used to calculate body fat percentage and would thus have a direct correlation.
@@ -225,6 +226,38 @@ From the above plot of $C_p$ vs $p$, we see that the only models with $C_p$ valu
 summary(reg6)
 ```
 
+We see that all of our variables except Thigh are significant at the 5 % level. It is slightly surprising that weight and wrist have a negative coefficient because the exploratory data analysis demonstrated that these variables have a positive relationship with bodyfat percentage.
+
+We can examine this further using partial correlations. We calculate partial correlation between wrist bodyfat while adjusting for different combinations of covariates.
+
+```{r}
+
+reg_bodyfat = lm(BodyFat ~ Abdomen + Weight + Forearm + Age + Thigh, data=bodyfat)
+reg_wrist =   lm(Wrist   ~ Abdomen + Weight + Forearm + Age + Thigh, data=bodyfat)
+paste("Partial correlation between wrist and bodyfat", cor(reg_bodyfat$residuals, reg_wrist$residuals))
+
+reg_bodyfat = lm(BodyFat ~ Weight + Forearm + Age + Thigh, data=bodyfat)
+reg_wrist =   lm(Wrist   ~ Weight + Forearm + Age + Thigh, data=bodyfat)
+cor(reg_bodyfat$residuals, reg_wrist$residuals)
+
+reg_bodyfat = lm(BodyFat ~ Forearm + Age + Thigh, data=bodyfat)
+reg_wrist =   lm(Wrist   ~ Forearm + Age + Thigh, data=bodyfat)
+cor(reg_bodyfat$residuals, reg_wrist$residuals)
+
+reg_bodyfat = lm(BodyFat ~  Age + Thigh, data=bodyfat)
+reg_wrist =   lm(Wrist   ~  Age + Thigh, data=bodyfat)
+cor(reg_bodyfat$residuals, reg_wrist$residuals)
+
+reg_bodyfat = lm(BodyFat ~   Thigh, data=bodyfat)
+reg_wrist =   lm(Wrist   ~   Thigh, data=bodyfat)
+cor(reg_bodyfat$residuals, reg_wrist$residuals)
+
+reg_bodyfat = lm(BodyFat ~   Thigh, data=bodyfat)
+
+```
+
+**Model Diagnostics**
+
 We check residuals plots to ensure assumptions about our model have not been violated:
 
 ```{r}
@@ -240,7 +273,7 @@ qqline(reg$residuals)
 
 We see no obvious non-linear or fan-shaped pattern in the residuals vs. fitted values plot, indicating that linearity and homoscedasticity assumptions have not been violated. The QQ plot shows some signs of the errors being light-tailed, but the deviations should be slight enough that our model is a good fit overall.
 
-We can also assess any multicollinierity between input variables, since we can expect some physical measurements to be correlated with one another.
+We can also assess any multicollinierity between input variables, since we can expect some physical measurements to be correlated with one another. We will plot the correlations between the different variables as a heat-map.
 
 ```{r}
 options(repr.plot.height = 14, repr.plot.width = 15)
@@ -274,6 +307,8 @@ plot_cor_matrix <- cor_matrix %>%
 plot_cor_matrix
 ```
 
+This plot shows that the weight variable strongly correlated with thigh and abdomen and moderately correlated with wrist. Abdomen and thigh also seem to be moderately correlated. To further investigate this issue of multicollinearity we can calculate the Variance Inflation Factors (VIFs).
+
 ```{r}
 VIF_bodyfat<- vif(reg6)
 VIF_bodyfat
@@ -281,9 +316,11 @@ VIF_bodyfat
 
 ## Conclusion
 
-From the analysis, we identified that several physical measurements are significantly related to body fat percentage. After conducting exploratory data analysis and using backward selection, the optimal linear regression model included six covariates: Abdomen, Weight, Wrist, Forearm, Age, and Thigh. This model was chosen based on its adherence to the assumptions of linear regression, minimal multicollinearity among variables, and strong statistical metrics, including Mallows' Cp, R^2^ and adjusted R^2^.
+From the analysis, we identified that several physical measurements are significantly related to body fat percentage. After conducting exploratory data analysis and using backward selection, the optimal linear regression model included six covariates: Abdomen, Weight, Wrist, Forearm, Age, and Thigh.
 
-The selected model performed well under diagnostic checks, with residual plots indicating no major violations of linearity, independence, or constant variance assumptions. While the QQ plot showed slight deviations, these were minor and did not significantly undermine the fit of the model.
+This model was chosen based on its adherence to the assumptions of linear regression, minimal multicollinearity among variables, and strong statistical metrics, including Mallows' Cp, R^2^ and adjusted R^2^. These 6 covariates seem to be good explanatory variables for bodyfat percentage and while including other variables improves our model, the additional improvement is quite small.
+
+The selected model performed well under diagnostic checks, with residual plots indicating no major violations of linearity, independence, or constant variance assumptions. While the QQ plot showed slight deviations, these were minor and did not significantly undermine the fit of the model. There was some evidence of multicollinearity, which suggests that a smaller subset of our variables could also create a good model, but for the purposes of our analysis, we decided to include some additional variables since they improved adjusted$$ R  ^2$$ and did not have high standard errors.
 
 #### Key findings
 
