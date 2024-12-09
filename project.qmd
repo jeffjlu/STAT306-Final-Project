@@ -10,19 +10,33 @@ execute:
 # Final Report
 
 ## Introduction
-The dataset we are using was provided by Dr. A. Garth Fisher (personal communication, October 5, 1994), and contains age, weight, height, and body circumference measurements for 252 men. The data was originally collected in 1985 (Penrose et al., 1985) and can be found at Body Fat Prediction Dataset. Instead of using expensive medical imaging methods, these measures were taken in order to create a predictive equation for body fat percentage using simple indicators.
-The response variable is Body Fat Percentage,  estimated by underwater weighing, which is an accurate technique that derives body density and subsequently estimates body fat percentage using predictive equations like Siri’s and Brozek's equations. The explanatory variables in the dataset include: 
-Age: Recorded in years.
-Weight: Recorded in pounds. It includes both weight in air (used in standard conditions) and in water (for density calculation purposes).
-Height: Measured in inches, included in the dataset as a crucial factor for calculating indices like Body Mass Index (BMI).
-Density: Calculated in g/cm3.
-Body Circumference Measurements: Ten different variables representing various circumferences of Neck, Chest, Abdomen (measured at the umbilicus level with the iliac crest), Hip, Thigh, Knee, Ankle, Biceps (extended), Forearm, Wrist (measured distal to the styloid processes). All measurements are in centimetres (cm) using a measuring tape. 
-BMI (weight divided by height squared) is widely used as a standard measure of obesity. However, according to Adab et al. (2018), it has limitations. Studies had shown that BMI is not an accurate predictor of obesity, especially in people who are athletic, short or older. 
-Instead, directly measuring body fat distribution appears to be a better indicator of obesity. While technologies like dual-energy X-ray absorptiometry (DEXA), computed tomography (CT), and magnetic resonance imaging (MRI) provide accurate imaging of body fat, they are also expensive and not suitable for repeated use (Denton & Karpe, 2016). This study aimed to evaluate whether simple and cost-effective measurements of body circumference could be a reliable predictor of body fat percentage. 
-Our research question is which physical measurements of a person, out of the ones we have access to, are related to total body fat percentage? 
-The response variable in our investigation will be body fat percentage (from Siri's (1956) equation) and the covariates will be Age, Weight, Height, Neck, Chest, Abdomen, Hip, Thigh, Knee, Ankle, Biceps, Forearm, Wrist. We will omit density as a covariate as it was directly used to calculate body fat percentage using equations and would thus have a direct correlation.
+
+The dataset we are using was provided by Dr. A. Garth Fisher (personal communication, October 5, 1994), and contains age, weight, height, and body circumference measurements for 252 men. The data was originally collected in 1985 (Penrose et al., 1985) and can be found at [Body Fat Prediction Dataset. ](https://www.kaggle.com/datasets/fedesoriano/body-fat-prediction-dataset)Instead of using expensive medical imaging methods, these measures were taken in order to create a predictive equation for body fat percentage using simple indicators. The response variable is Body Fat Percentage, estimated by underwater weighing, which is an accurate technique that derives body density and subsequently estimates body fat percentage using predictive equations like Siri’s and Brozek's equations. The dataset contains the following variables
+
+-   Bodyfat: Estimated using Siri’s and Brozek's equations
+
+```{=html}
+<!-- -->
+```
+-   Age: Recorded in years.
+
+-   Weight: Recorded in pounds. It includes both weight in air (used in standard conditions) and in water (for density calculation purposes).
+
+-   Height: Measured in inches, included in the dataset as a crucial factor for calculating indices like Body Mass Index (BMI). Density: Calculated in $$g/cm^3.$$
+
+-   Body Circumference Measurements: Ten different variables representing various circumferences of Neck, Chest, Abdomen (measured at the umbilicus level with the iliac crest), Hip, Thigh, Knee, Ankle, Biceps (extended), Forearm, Wrist (measured distal to the styloid processes). All measurements are in centimetres (cm) using a measuring tape.
+
+-   Density: Body Density in $g/cm^3.$
+
+## Motivation and Research Question
+
+BMI (weight divided by height squared) is widely used as a standard measure of obesity. However, according to Adab et al. (2018), it has limitations. Studies had shown that BMI is not an accurate predictor of obesity, especially in people who are athletic, short or older. Instead, directly measuring body fat distribution appears to be a better indicator of obesity. While technologies like dual-energy X-ray absorptiometry (DEXA), computed tomography (CT), and magnetic resonance imaging (MRI) provide accurate imaging of body fat, they are also expensive and not suitable for repeated use (Denton & Karpe, 2016). This study aimed to evaluate whether simple and cost-effective measurements of body circumference could be a reliable predictor of body fat percentage.
+
+Our research question is **"Which physical measurements of a person, out of the ones we have access to, are related to total body fat percentage?"** The response variable in our investigation will be body fat percentage (from Siri's (1956) equation) and the covariates will be Age, Weight, Height, Neck, Chest, Abdomen, Hip, Thigh, Knee, Ankle, Biceps, Forearm, Wrist. We will omit density as a covariate as it was directly used to calculate body fat percentage using equations and would thus have a direct correlation.
 
 ## Exploratory Data Analysis
+
+We start by loading the relevant libaries
 
 ```{r}
 #| output: false
@@ -51,7 +65,6 @@ bodyfat_age <- ggplot(bodyfat, aes(x = Age, y = BodyFat)) +
   xlab("Age (years)") +
   ylab("Body Fat Percentage") +
   theme(text = element_text(size = 10))
-
 
 
 bodyfat_weight <- ggplot(bodyfat, aes(x = Weight, y = BodyFat)) +
@@ -135,7 +148,7 @@ plot_grid(bodyfat_biceps, bodyfat_wrist, bodyfat_ankle,bodyfat_chest,bodyfat_for
 plot_grid(bodyfat_knee, ncol=3, nrow=2, scale=1)
 ```
 
-We see that Weight, Abdomen, Thigh, Hip, Biceps, Neck, Ankle, Chest, have moderate to strong positive relationships with Body Fat Percentage. Age, Forearm Circumference and Wrist Circumference may have a very weak but slightly positive relationship. Height does not seem to have a relationship with Body Fat Percentage.
+We see that Weight, Abdomen, Thigh, Hip, Biceps, Neck, Ankle, Chest, have moderate to strong positive relationships with Body Fat Percentage. Age, Forearm, Biceps, and Wrist Circumference may have a weak but slightly positive relationship. Height does not seem to have a relationship with Body Fat Percentage.
 
 It does not seem that our variance in bodyfat changes with our covariates, so we don't think a transformation would be needed at this stage of our analysis.
 
@@ -147,6 +160,8 @@ summaries <- bodyfat |>
              summarise(across(BodyFat:Wrist, mean))
 summaries
 ```
+
+The average age of a person in our dataset is 44 years. The average bodyfat percentage is 19%. From the sample means, it seems like abdomen, chest and hip circumferences tend to be higher compared to other measurements.
 
 ```{r}
 print("Standard deviations")
@@ -161,6 +176,8 @@ num_nas
 ```
 
 There are no NA values in our dataset, which is good for our modelling.
+
+We will now proceed with our regression analysis.
 
 ## Analysis
 
@@ -201,7 +218,6 @@ reg12 = lm(BodyFat~Abdomen + Weight + Wrist + Forearm + Age + Thigh + Neck + Hip
 reg13 = lm(BodyFat~Abdomen + Weight + Wrist + Forearm + Age + Thigh + Neck + Hip + Biceps + Ankle + Height + Chest + Knee, data=bodyfat)
 
 models = list(reg1, reg2, reg3, reg4, reg5, reg6, reg7, reg8, reg9, reg10, reg11, reg12, reg13)
-
 fullms = summary(reg13)$sigma^2
 cp = c()
 p = seq(1:13)
@@ -226,37 +242,56 @@ From the above plot of $C_p$ vs $p$, we see that the only models with $C_p$ valu
 summary(reg6)
 ```
 
-We see that all of our variables except Thigh are significant at the 5 % level. It is slightly surprising that weight and wrist have a negative coefficient because the exploratory data analysis demonstrated that these variables have a positive relationship with bodyfat percentage.
+We see that all of our variables except Thigh are significant at the 5 % level. The p-value for thigh is very close to statistical significance. As expected, most variables have a positive coefficient, suggesting that the response (bodyfat percentage) increases with an increase in the covariates.
 
-We can examine this further using partial correlations. We calculate partial correlation between wrist bodyfat while adjusting for different combinations of covariates.
+On initial thought, it is slightly surprising that weight and wrist have a negative coefficient because the exploratory data analysis demonstrated that these variables have a positive relationship with bodyfat percentage.
+
+We can examine this further using partial correlations. We calculate partial correlation between weight and bodyfat while adjusting for different combinations of covariates.
+
+```{r}
+reg_bodyfat = lm(BodyFat ~ Abdomen + Wrist + Forearm + Age + Thigh, data=bodyfat)
+reg_wrist =   lm(Weight  ~ Abdomen + Wrist + Forearm + Age + Thigh, data=bodyfat)
+paste("Partial correlation between Weight and Bodyfat, adjusting for Abdomen, Wrist, Forearm,Age, Thigh", cor(reg_bodyfat$residuals, reg_wrist$residuals))
+
+reg_bodyfat = lm(BodyFat ~ Abdomen, data=bodyfat)
+reg_wrist =   lm(Weight ~  Abdomen, data=bodyfat)
+paste("Partial correlation between Weight and bodyfat, adjusting for Abdomen",cor(reg_bodyfat$residuals, reg_wrist$residuals))
+
+reg_bodyfat = lm(BodyFat ~  Wrist + Forearm + Age + Thigh, data=bodyfat)
+reg_wrist =   lm(Weight  ~  Wrist + Forearm + Age + Thigh, data=bodyfat)
+paste("Partial correlation between Weight and bodyfat, adjusting for Wrist,Forearm + Age,Thigh",cor(reg_bodyfat$residuals, reg_wrist$residuals))
+
+
+reg_bodyfat = lm(BodyFat ~ Forearm + Age + Thigh, data=bodyfat)
+reg_wrist =   lm(Weight ~  Forearm + Age + Thigh, data=bodyfat)
+paste("Partial correlation between Weight and bodyfat, adjusting for Forearm, Age, Thigh",cor(reg_bodyfat$residuals, reg_wrist$residuals))
+```
+
+From the partial correlations, it seems like once we have adjusted for abdomen circumference, a one unit increase in weight is related to a decrease in body fat percentage. This could be because keeping abdomen circumference constant, an increase in weight may be related to muscle gain or increase in bone density. If we did not adjust for abdomen, we see that an increase is weight is associated with increases in body fat, which suggests that body fat in men is possibly stored in abdomen.
+
+Lets do the same for wrist
 
 ```{r}
 
 reg_bodyfat = lm(BodyFat ~ Abdomen + Weight + Forearm + Age + Thigh, data=bodyfat)
 reg_wrist =   lm(Wrist   ~ Abdomen + Weight + Forearm + Age + Thigh, data=bodyfat)
-paste("Partial correlation between wrist and bodyfat", cor(reg_bodyfat$residuals, reg_wrist$residuals))
+paste("Partial correlation between wrist and bodyfat, adjusting for Abdomen + Weight + Forearm + Age + Thigh", cor(reg_bodyfat$residuals, reg_wrist$residuals))
 
 reg_bodyfat = lm(BodyFat ~ Weight + Forearm + Age + Thigh, data=bodyfat)
 reg_wrist =   lm(Wrist   ~ Weight + Forearm + Age + Thigh, data=bodyfat)
-cor(reg_bodyfat$residuals, reg_wrist$residuals)
+paste("Partial correlation between wrist and bodyfat, adjusting for Weight + Forearm + Age + Thigh",cor(reg_bodyfat$residuals, reg_wrist$residuals))
 
 reg_bodyfat = lm(BodyFat ~ Forearm + Age + Thigh, data=bodyfat)
 reg_wrist =   lm(Wrist   ~ Forearm + Age + Thigh, data=bodyfat)
-cor(reg_bodyfat$residuals, reg_wrist$residuals)
-
-reg_bodyfat = lm(BodyFat ~  Age + Thigh, data=bodyfat)
-reg_wrist =   lm(Wrist   ~  Age + Thigh, data=bodyfat)
-cor(reg_bodyfat$residuals, reg_wrist$residuals)
-
-reg_bodyfat = lm(BodyFat ~   Thigh, data=bodyfat)
-reg_wrist =   lm(Wrist   ~   Thigh, data=bodyfat)
-cor(reg_bodyfat$residuals, reg_wrist$residuals)
-
-reg_bodyfat = lm(BodyFat ~   Thigh, data=bodyfat)
+paste("Partial correlation between wrist and bodyfat, adjusting for Forearm + Age + Thigh",cor(reg_bodyfat$residuals, reg_wrist$residuals))
 
 ```
 
-**Model Diagnostics**
+It seems like once we have adjusted for other covariates, wrist is negatively correlated with body fat. It is unclear why this may be the case but we can hypothesize that the same reasoning for the effect of weight can be applied here. It may be that keeping other measurements constant, increase in wrists sizes are due to other body changes indicative of fat loss, such as muscle or bone density gain.
+
+Both these findings suggest that solely wrist and weight may not be good indicators of body fat.
+
+**Diagnostics**
 
 We check residuals plots to ensure assumptions about our model have not been violated:
 
@@ -320,7 +355,7 @@ From the analysis, we identified that several physical measurements are signific
 
 This model was chosen based on its adherence to the assumptions of linear regression, minimal multicollinearity among variables, and strong statistical metrics, including Mallows' Cp, R^2^ and adjusted R^2^. These 6 covariates seem to be good explanatory variables for bodyfat percentage and while including other variables improves our model, the additional improvement is quite small.
 
-The selected model performed well under diagnostic checks, with residual plots indicating no major violations of linearity, independence, or constant variance assumptions. While the QQ plot showed slight deviations, these were minor and did not significantly undermine the fit of the model. There was some evidence of multicollinearity, which suggests that a smaller subset of our variables could also create a good model, but for the purposes of our analysis, we decided to include some additional variables since they improved adjusted$$ R  ^2$$ and did not have high standard errors.
+The selected model performed well under diagnostic checks, with residual plots indicating no major violations of linearity, independence, or constant variance assumptions. While the QQ plot showed slight deviations, these were minor and did not significantly undermine the fit of the model. There was some evidence of multicollinearity, which suggests that a smaller subset of our variables could also create a good model, but for the purposes of our analysis, we decided to include some additional variables since they improved adjusted $R^2$ and did not have high standard errors.
 
 #### Key findings
 
@@ -333,6 +368,12 @@ The selected model performed well under diagnostic checks, with residual plots i
 #### Implications
 
 The findings suggest that these easily measurable physical attributes can effectively estimate body fat percentage. Abdomen circumference, in particular, stands out as a critical predictor, which could be useful for health and fitness evaluations without requiring sophisticated equipment.
+
+#### Limitations
+
+The data in our study only comes from men, so the findings may not be applicable to other genders. More data on other genders would be critical in conducting research on the relationship between body fat and physical measurements for these groups.
+
+Additionally, we utilised backward selection to pick an optimal model of 6 covariates. However, backward selection is not exhaustive and can miss potentially useful models. Further research utilising other kinds of model selection techniques like forward selection and best subset selection can shed light on other good indicators of body fat.
 
 #### Future Directions
 
